@@ -26,7 +26,7 @@ Projet SI en Java : construire une API backend propre, structurée, documentée 
 
 \- Cozma Miroslav - rôle Lead Dev(PO / Lead Dev / Dev / QA)
 
-\- Nom Prénom - rôle
+\- Machet Keryan - Dev
 
 \- Nom Prénom - rôle
 
