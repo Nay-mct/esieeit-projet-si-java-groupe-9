@@ -64,5 +64,10 @@ git clone <URL\_DU\_REPO>
 
 cd <repo>
 
+```
 
+## 📚 Documentation Architecture (TP 2.1)
+* [Modèle du Domaine (Entités, Règles, Diagramme)](docs/DOMAIN_MODEL.md)
+* [Structure des Packages](docs/PACKAGE_STRUCTURE.md)
+* [Décisions Techniques](docs/DECISIONS.md)
 
