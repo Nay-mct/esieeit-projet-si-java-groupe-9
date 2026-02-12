@@ -1,24 +1,24 @@
 # BACKLOG — Projet SI Java (Groupe 9)
 
-## 🎯 Vision produit
-Application web de gestion de projets et de tâches destinée aux étudiants et petites équipes.  
-Elle permet de créer des projets, organiser des tâches et suivre leur avancement.  
-L’objectif est de fournir un outil simple, structuré et évolutif.
+##  Vision produit
+Application web de gestion de projets et de tâches destinée aux étudiants et petites équipes.
+Elle permet de créer des projets, ajouter des tâches et suivre leur avancement.
+Objectif : fournir un outil simple, clair et évolutif pour organiser le travail.
 
-## 🎯 MVP
+##  MVP
 Le MVP inclut l’authentification, la gestion des projets et la gestion des tâches (US-01 à US-10).  
 Les fonctionnalités de recherche et d’administration sont considérées comme bonus.
 
 ---
 
-## 👥 Acteurs
+##  Acteurs
 - **Visiteur** : utilisateur non connecté
 - **Utilisateur** : utilisateur connecté
 - **Admin** : utilisateur avec droits avancés (bonus)
 
 ---
 
-## 📊 Conventions
+##  Conventions
 - **Priorité (MoSCoW)** : Must / Should / Nice
 - **Estimation** : S (≤2h) / M (3–5h) / L (>5h, à découper)
 
