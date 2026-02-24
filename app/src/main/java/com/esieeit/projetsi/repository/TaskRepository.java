@@ -30,4 +30,21 @@ public class TaskRepository {
     public void delete(Task task) {
         tasks.remove(task);
     }
+    public List<Task> findByProjectIdAndStatus(String projectId, Task.Status status) {
+    return tasks.stream()
+            .filter(t -> t.getProjectId().equals(projectId) && t.getStatus() == status)
+            .collect(Collectors.toList());
+    }
+    public List<Task> searchByProjectIdAndKeyword(String projectId, String keyword) {
+    String kw = keyword.toLowerCase();
+
+    return tasks.stream()
+            .filter(t -> t.getProjectId().equals(projectId))
+            .filter(t -> {
+                String title = t.getTitle() == null ? "" : t.getTitle().toLowerCase();
+                String desc = t.getDescription() == null ? "" : t.getDescription().toLowerCase();
+                return title.contains(kw) || desc.contains(kw);
+            })
+            .collect(Collectors.toList());
+}
 }

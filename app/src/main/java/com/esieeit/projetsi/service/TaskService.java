@@ -73,4 +73,24 @@ public class TaskService {
 
         taskRepository.delete(task);
     }
+    // US-13: filtrer les tâches d'un projet par statut
+public List<Task> filterTasksByStatus(String projectId, Task.Status status) {
+    if (projectId == null || projectId.isBlank()) {
+        throw new BusinessException("Project id invalide");
+    }
+    if (status == null) {
+        throw new BusinessException("Status invalide");
+    }
+    return taskRepository.findByProjectIdAndStatus(projectId, status);
+}
+// US-14: rechercher une tâche par mot-clé (dans titre + description)
+public List<Task> searchTasks(String projectId, String keyword) {
+    if (projectId == null || projectId.isBlank()) {
+        throw new BusinessException("Project id invalide");
+    }
+    if (keyword == null || keyword.isBlank()) {
+        throw new BusinessException("Mot-clé invalide");
+    }
+    return taskRepository.searchByProjectIdAndKeyword(projectId, keyword);
+}
 }

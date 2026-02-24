@@ -71,4 +71,33 @@ class TaskServiceTest {
                 taskService.markDone("unknown-id")
         );
     }
+    @Test
+void filterTasksByStatus_should_return_only_matching_status() {
+    taskService.addTask("project-1", "T1", null);
+    var t2 = taskService.addTask("project-1", "T2", null);
+    taskService.markDone(t2.getId());
+
+    var todos = taskService.filterTasksByStatus("project-1", Task.Status.TODO);
+    var dones = taskService.filterTasksByStatus("project-1", Task.Status.DONE);
+
+    assertEquals(1, todos.size());
+    assertEquals(Task.Status.TODO, todos.get(0).getStatus());
+
+    assertEquals(1, dones.size());
+    assertEquals(Task.Status.DONE, dones.get(0).getStatus());
+}
+@Test
+void searchTasks_should_return_only_matching_tasks() {
+    taskService.addTask("project-1", "Faire les courses", "acheter du lait");
+    taskService.addTask("project-1", "Réviser Java", "JUnit et services");
+    taskService.addTask("project-2", "Autre projet", "ne doit pas apparaître");
+
+    var result1 = taskService.searchTasks("project-1", "java");
+    assertEquals(1, result1.size());
+    assertTrue(result1.get(0).getTitle().toLowerCase().contains("java"));
+
+    var result2 = taskService.searchTasks("project-1", "lait");
+    assertEquals(1, result2.size());
+    assertTrue(result2.get(0).getDescription().toLowerCase().contains("lait"));
+}
 }
