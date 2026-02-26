@@ -82,6 +82,7 @@ public class Comment {
     }
 
     public final void setTask(Task task) {
+        Validators.requireNonNull(task, "comment.task");
         this.task = task;
         touch();
     }

@@ -103,7 +103,7 @@ public class Task {
     }
 
     public final void setTitle(String title) {
-        this.title = Validators.requireNonBlank(title, "task.title", 1, 120);
+        this.title = Validators.requireNonBlank(title, "task.title", 1, 200);
         touch();
     }
 
@@ -119,7 +119,7 @@ public class Task {
         }
         String normalized = description.trim();
         this.description = normalized.isEmpty() ? null
-                : Validators.requireSize(normalized, "task.description", 1, 1000);
+                : Validators.requireSize(normalized, "task.description", 1, 2000);
         touch();
     }
 
@@ -142,6 +142,7 @@ public class Task {
     }
 
     public final void setProject(Project project) {
+        Validators.requireNonNull(project, "task.project");
         this.project = project;
         touch();
     }
@@ -190,7 +191,6 @@ public class Task {
             return;
         }
         comments.remove(comment);
-        comment.setTask(null);
     }
 
     public Instant getCreatedAt() {

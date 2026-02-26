@@ -110,7 +110,7 @@ public class User {
     }
 
     public final void setUsername(String username) {
-        this.username = Validators.requireNonBlank(username, "user.username", 3, 30);
+        this.username = Validators.requireNonBlank(username, "user.username", 3, 50);
     }
 
     public String getPasswordHash() {

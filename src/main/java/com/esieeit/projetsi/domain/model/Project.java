@@ -91,7 +91,7 @@ public class Project {
     }
 
     public final void setName(String name) {
-        this.name = Validators.requireNonBlank(name, "project.name", 1, 80);
+        this.name = Validators.requireNonBlank(name, "project.name", 1, 150);
         touch();
     }
 
@@ -111,7 +111,7 @@ public class Project {
             touch();
             return;
         }
-        this.description = Validators.requireSize(normalized, "project.description", 1, 500);
+        this.description = Validators.requireSize(normalized, "project.description", 1, 1000);
         touch();
     }
 
@@ -174,7 +174,6 @@ public class Project {
             return;
         }
         tasks.remove(task);
-        task.setProject(null);
         touch();
     }
 

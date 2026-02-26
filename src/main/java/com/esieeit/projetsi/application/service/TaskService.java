@@ -31,7 +31,6 @@ public class TaskService {
     public Task create(TaskCreateRequest request) {
         Validators.requireNonNull(request, "request");
         Task task = new Task(request.getTitle(), request.getDescription(), defaultProject);
-        defaultProject.addTask(task);
         return taskRepository.save(task);
     }
 
