@@ -14,8 +14,8 @@ Projet SI en Java : construire une API backend propre, structurée, documentée 
 
 ## Équipe
 
-- Nom Prénom - rôle (PO / Lead Dev / Dev / QA)
-- Nom Prénom - rôle
+- Miroslav - rôle PO Lead Dev
+- Machet Keryan - Dev
 - Nom Prénom - rôle
 
 ## Stack
