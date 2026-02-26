@@ -100,3 +100,58 @@ Avec profil `dev` :
 - `docs/DOMAIN_RULES.md`
 - `docs/API_TASKS.md`
 - `docs/API_ERRORS.md`
+
+## TP 4.2 - Repositories et donnees de test
+
+### Repositories JPA crees
+
+- `UserJpaRepository`
+  - `findByEmail`
+  - `findByUsername`
+  - `existsByEmail`
+  - `existsByUsername`
+- `ProjectJpaRepository`
+  - `findByStatus`
+  - `findByNameContainingIgnoreCase`
+  - `findByOwnerId`
+  - `existsByName`
+  - `findByNameAndOwnerId`
+- `TaskJpaRepository`
+  - `findByStatus`
+  - `findByProjectId`
+  - `findByProjectIdAndStatus`
+  - `findByTitleContainingIgnoreCase`
+  - `countByProjectId`
+  - `existsByProjectIdAndTitleIgnoreCase`
+  - `findByProjectIdOrderByCreatedAtDesc`
+
+### Service migre vers la persistance reelle
+
+- `TaskService` passe par le port `TaskRepository`
+- adaptateur primaire `JpaTaskRepositoryAdapter` branche le port sur Spring Data JPA
+- repository in-memory garde uniquement pour profil `inmemory`
+
+### Seed des donnees de test
+
+Strategie choisie : `CommandLineRunner` en profil `dev`.
+
+- classe : `src/main/java/com/esieeit/projetsi/infrastructure/seed/DataInitializer.java`
+- idempotence : seed execute seulement si `count()==0`
+- dataset insere :
+  - 3 utilisateurs
+  - 2 projets
+  - 4 taches avec statuts et priorites varies
+
+Lancement avec seed :
+
+```bash
+./gradlew bootRun --args='--spring.profiles.active=dev'
+```
+
+### Endpoints de test rapides
+
+- `GET /api/tasks`
+- `GET /api/tasks?status=TODO`
+- `GET /api/tasks?projectId=1`
+- `GET /api/tasks?projectId=1&status=IN_PROGRESS`
+- `GET /api/tasks?keyword=repo`

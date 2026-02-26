@@ -11,4 +11,10 @@ public interface ProjectJpaRepository extends JpaRepository<Project, Long> {
     List<Project> findByStatus(ProjectStatus status);
 
     Optional<Project> findByNameAndOwnerId(String name, Long ownerId);
+
+    List<Project> findByNameContainingIgnoreCase(String keyword);
+
+    List<Project> findByOwnerId(Long ownerId);
+
+    boolean existsByName(String name);
 }

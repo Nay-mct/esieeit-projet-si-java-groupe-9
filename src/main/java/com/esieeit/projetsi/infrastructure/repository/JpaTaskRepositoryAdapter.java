@@ -1,6 +1,7 @@
 package com.esieeit.projetsi.infrastructure.repository;
 
 import com.esieeit.projetsi.application.port.TaskRepository;
+import com.esieeit.projetsi.domain.enums.TaskStatus;
 import com.esieeit.projetsi.domain.model.Project;
 import com.esieeit.projetsi.domain.model.Task;
 import com.esieeit.projetsi.domain.model.User;
@@ -64,6 +65,42 @@ public class JpaTaskRepositoryAdapter implements TaskRepository {
     @Transactional(readOnly = true)
     public List<Task> findAll() {
         return taskJpaRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Task> findByStatus(TaskStatus status) {
+        return taskJpaRepository.findByStatus(status);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Task> findByProjectId(Long projectId) {
+        return taskJpaRepository.findByProjectId(projectId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Task> findByProjectIdAndStatus(Long projectId, TaskStatus status) {
+        return taskJpaRepository.findByProjectIdAndStatus(projectId, status);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Task> findByTitleContainingIgnoreCase(String keyword) {
+        return taskJpaRepository.findByTitleContainingIgnoreCase(keyword);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countByProjectId(Long projectId) {
+        return taskJpaRepository.countByProjectId(projectId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByProjectIdAndTitleIgnoreCase(Long projectId, String title) {
+        return taskJpaRepository.existsByProjectIdAndTitleIgnoreCase(projectId, title);
     }
 
     @Override

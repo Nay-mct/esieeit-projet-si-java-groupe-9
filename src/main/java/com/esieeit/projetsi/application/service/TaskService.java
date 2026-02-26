@@ -30,11 +30,38 @@ public class TaskService {
 
     public Task create(TaskCreateRequest request) {
         Validators.requireNonNull(request, "request");
+        if (defaultProject.getId() != null
+                && taskRepository.existsByProjectIdAndTitleIgnoreCase(defaultProject.getId(), request.getTitle())) {
+            throw new BusinessRuleException("A task with the same title already exists in the project");
+        }
         Task task = new Task(request.getTitle(), request.getDescription(), defaultProject);
-        return taskRepository.save(task);
+        Task saved = taskRepository.save(task);
+        if (defaultProject.getId() == null && saved.getProject() != null && saved.getProject().getId() != null) {
+            defaultProject.setId(saved.getProject().getId());
+        }
+        return saved;
     }
 
     public List<Task> getAll() {
+        return taskRepository.findAll();
+    }
+
+    public List<Task> getAll(String statusRaw, Long projectId, String keyword) {
+        String normalizedKeyword = keyword == null ? null : keyword.trim();
+        if (normalizedKeyword != null && !normalizedKeyword.isEmpty()) {
+            return taskRepository.findByTitleContainingIgnoreCase(normalizedKeyword);
+        }
+
+        TaskStatus status = parseStatus(statusRaw);
+        if (status != null && projectId != null) {
+            return taskRepository.findByProjectIdAndStatus(projectId, status);
+        }
+        if (status != null) {
+            return taskRepository.findByStatus(status);
+        }
+        if (projectId != null) {
+            return taskRepository.findByProjectId(projectId);
+        }
         return taskRepository.findAll();
     }
 
@@ -74,10 +101,8 @@ public class TaskService {
     }
 
     private void applyStatusTransition(Task task, String statusRaw) {
-        TaskStatus target;
-        try {
-            target = TaskStatus.valueOf(statusRaw.trim().toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException ex) {
+        TaskStatus target = parseStatus(statusRaw);
+        if (target == null) {
             throw new InvalidDataException("Unknown status: " + statusRaw);
         }
 
@@ -108,6 +133,17 @@ public class TaskService {
     private void validateId(Long id) {
         if (id == null || id <= 0) {
             throw new InvalidDataException("id must be greater than 0");
+        }
+    }
+
+    private TaskStatus parseStatus(String statusRaw) {
+        if (statusRaw == null || statusRaw.isBlank()) {
+            return null;
+        }
+        try {
+            return TaskStatus.valueOf(statusRaw.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidDataException("Unknown status: " + statusRaw);
         }
     }
 }

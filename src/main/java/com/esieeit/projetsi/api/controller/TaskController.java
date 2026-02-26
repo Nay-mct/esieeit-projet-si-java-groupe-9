@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,8 +31,11 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<TaskResponse> getAll() {
-        return taskService.getAll().stream()
+    public List<TaskResponse> getAll(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long projectId,
+            @RequestParam(required = false) String keyword) {
+        return taskService.getAll(status, projectId, keyword).stream()
                 .map(TaskMapper::toResponse)
                 .toList();
     }
