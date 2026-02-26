@@ -14,7 +14,6 @@ import com.esieeit.projetsi.domain.model.User;
 import com.esieeit.projetsi.domain.validation.Validators;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,7 +24,7 @@ public class TaskService {
 
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        User systemOwner = new User("system@esieeit.local", "system", Set.of(UserRole.ADMIN));
+        User systemOwner = new User("system@esieeit.local", "system", "temporary-hash", UserRole.ADMIN);
         this.defaultProject = new Project("Default API Project", "Temporary project for TP 3.1", systemOwner);
     }
 

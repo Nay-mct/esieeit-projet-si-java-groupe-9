@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: esiee_project_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: project_si_db
+      MYSQL_USER: project_user
+      MYSQL_PASSWORD: project_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+      TZ: Europe/Paris
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data_mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot_pass"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: esiee_project_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root_pass
+      TZ: Europe/Paris
+      UPLOAD_LIMIT: 256M
+    ports:
+      - "8081:80"
+
+volumes:
+  db_data_mysql:

@@ -1,31 +1,92 @@
 package com.esieeit.projetsi.domain.model;
 
 import com.esieeit.projetsi.domain.enums.UserRole;
-import com.esieeit.projetsi.domain.exception.ValidationException;
 import com.esieeit.projetsi.domain.validation.Validators;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 /**
- * Domain entity representing an authenticated user.
+ * JPA entity representing an authenticated user.
  */
+@Entity
+@Table(
+        name = "users",
+        uniqueConstraints = {
+            @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
+            @UniqueConstraint(name = "uk_users_username", columnNames = "username")
+        }
+)
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String email;
-    private String username;
-    private String passwordHash;
-    private Set<UserRole> roles;
-    private final Instant createdAt;
 
-    public User(String email, String username, Set<UserRole> roles) {
-        this.createdAt = Instant.now();
+    @Email
+    @NotBlank
+    @Size(max = 150)
+    @Column(name = "email", nullable = false, length = 150)
+    private String email;
+
+    @NotBlank
+    @Size(min = 3, max = 50)
+    @Column(name = "username", nullable = false, length = 50)
+    private String username;
+
+    @Size(max = 255)
+    @Column(name = "password_hash", length = 255)
+    private String passwordHash;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 30)
+    private UserRole role = UserRole.USER;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    private Set<Project> ownedProjects = new HashSet<>();
+
+    @OneToMany(mappedBy = "assignee", fetch = FetchType.LAZY)
+    private Set<Task> assignedTasks = new HashSet<>();
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private Instant updatedAt;
+
+    protected User() {
+        // Required by JPA.
+    }
+
+    public User(String email, String username, UserRole role) {
+        this(email, username, null, role);
+    }
+
+    public User(String email, String username, String passwordHash, UserRole role) {
         setEmail(email);
         setUsername(username);
-        setRoles(roles);
+        setPasswordHash(passwordHash);
+        setRole(role == null ? UserRole.USER : role);
     }
 
     public Long getId() {
@@ -61,22 +122,49 @@ public class User {
             Validators.requireSize(passwordHash, "user.passwordHash", 10, 255);
         }
         this.passwordHash = passwordHash;
+        this.updatedAt = Instant.now();
     }
 
-    public Set<UserRole> getRoles() {
-        return Collections.unmodifiableSet(roles);
+    public UserRole getRole() {
+        return role;
     }
 
-    public final void setRoles(Set<UserRole> roles) {
-        Validators.requireNonNull(roles, "user.roles");
-        if (roles.isEmpty()) {
-            throw new ValidationException("user.roles", "must contain at least one role");
-        }
-        this.roles = new HashSet<>(roles);
+    public final void setRole(UserRole role) {
+        Validators.requireNonNull(role, "user.role");
+        this.role = role;
+        this.updatedAt = Instant.now();
+    }
+
+    public Set<Project> getOwnedProjects() {
+        return ownedProjects;
+    }
+
+    public Set<Task> getAssignedTasks() {
+        return assignedTasks;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
     }
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @PrePersist
+    void onCreate() {
+        Instant now = Instant.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    void onUpdate() {
+        this.updatedAt = Instant.now();
     }
 
     /**
@@ -84,12 +172,12 @@ public class User {
      */
     public boolean hasRole(UserRole role) {
         Validators.requireNonNull(role, "user.role");
-        return roles.contains(role);
+        return this.role == role;
     }
 
     @Override
     public String toString() {
-        return "User{id=" + id + ", email='" + email + "', username='" + username + "', roles=" + roles + "}";
+        return "User{id=" + id + ", email='" + email + "', username='" + username + "', role=" + role + "}";
     }
 
     @Override
@@ -100,7 +188,7 @@ public class User {
         if (!(obj instanceof User other)) {
             return false;
         }
-        return Objects.equals(id, other.id);
+        return id != null && id.equals(other.id);
     }
 
     @Override

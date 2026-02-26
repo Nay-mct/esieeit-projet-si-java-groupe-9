@@ -4,7 +4,6 @@ import com.esieeit.projetsi.domain.enums.UserRole;
 import com.esieeit.projetsi.domain.model.Project;
 import com.esieeit.projetsi.domain.model.Task;
 import com.esieeit.projetsi.domain.model.User;
-import java.util.Set;
 
 /**
  * Minimal CLI demo for the domain model lifecycle.
@@ -12,9 +11,9 @@ import java.util.Set;
 public class Demo {
 
     public static void main(String[] args) {
-        User owner = new User("alice@example.com", "alice", Set.of(UserRole.USER));
-        Project project = new Project("Projet SI", "Démo domaine", owner);
-        Task task = new Task("Initialiser le domaine", "Créer entités + validations", project);
+        User owner = new User("alice@example.com", "alice", "temporary-hash", UserRole.USER);
+        Project project = new Project("Projet SI", "Demo domaine", owner);
+        Task task = new Task("Initialiser le domaine", "Creer entites + validations", project);
         project.addTask(task);
 
         System.out.println(task);
