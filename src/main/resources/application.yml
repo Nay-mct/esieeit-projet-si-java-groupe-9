@@ -5,7 +5,7 @@ spring:
   application:
     name: project-si-api
   datasource:
-    url: jdbc:mysql://localhost:3307/project_si_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Europe/Paris
+    url: jdbc:mysql://localhost:3307/project_si_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Paris
     username: project_user
     password: project_pass
     driver-class-name: com.mysql.cj.jdbc.Driver
