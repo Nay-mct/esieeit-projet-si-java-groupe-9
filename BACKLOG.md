@@ -1,231 +1,184 @@
-# BACKLOG — Projet SI Java (Groupe 9)
+# Backlog Produit - Projet SI Java (ESIEE-IT)
 
-##  Vision produit
-Application web de gestion de projets et de tâches destinée aux étudiants et petites équipes.
-Elle permet de créer des projets, ajouter des tâches et suivre leur avancement.
-Objectif : fournir un outil simple, clair et évolutif pour organiser le travail.
+## Pitch produit
 
-##  MVP
-Le MVP inclut l’authentification, la gestion des projets et la gestion des tâches (US-01 à US-10).  
-Les fonctionnalités de recherche et d’administration sont considérées comme bonus.
+- Le produit permet de gérer des projets et des tâches dans une API Java structurée.
+- Il vise des étudiants ou petites équipes qui veulent organiser leur travail.
+- Le résultat attendu est un MVP sécurisé avec authentification, gestion projet/tâches et suivi d’avancement.
 
----
+## Hypothèses & contraintes
 
-##  Acteurs
-- **Visiteur** : utilisateur non connecté
-- **Utilisateur** : utilisateur connecté
-- **Admin** : utilisateur avec droits avancés (bonus)
+- API Java avec workflow Git `main/develop/feature/*`.
+- MVP réalisable sur le semestre, priorisé Must/Should/Nice.
+- Authentification obligatoire (register/login au minimum).
 
----
+## Acteurs
 
-##  Conventions
-- **Priorité (MoSCoW)** : Must / Should / Nice
-- **Estimation** : S (≤2h) / M (3–5h) / L (>5h, à découper)
+- Visiteur : non connecté
+- Utilisateur : connecté, gère ses projets et ses tâches
+- Admin : supervision (bonus)
 
----
+## Acteurs -> objectifs -> permissions
 
-# Module A — Authentification & Profil
+| Acteur | Objectifs | Permissions |
+|---|---|---|
+| Visiteur | Découvrir et accéder à l’application | S’inscrire, se connecter |
+| Utilisateur | Organiser son travail | CRUD projets, CRUD tâches, modifier profil |
+| Admin | Superviser la plateforme | Lister utilisateurs, bloquer/supprimer utilisateur |
 
-## US-01 — [Must] [M] Inscription
-En tant que **Visiteur**,  
-je veux **créer un compte**,  
-afin de **pouvoir accéder à l’application**.
+## Modules / Features
 
-**Critères d’acceptation**
-- Given je suis sur la page d’inscription  
-  When je saisis un email valide et un mot de passe conforme  
-  Then mon compte est créé et je suis redirigé vers la connexion  
-- Given l’email est déjà utilisé  
-  When je valide le formulaire  
-  Then un message d’erreur s’affiche et le compte n’est pas créé  
+- A. Authentification & Profil
+- B. Gestion des projets
+- C. Gestion des tâches
+- D. Recherche / Filtre
+- E. Administration (bonus)
 
----
+## User Stories (MoSCoW + estimation)
 
-## US-02 — [Must] [M] Connexion
-En tant que **Utilisateur**,  
-je veux **me connecter**,  
-afin de **retrouver mes projets**.
+| ID | Module | User Story | Priorité | Estim (S/M/L) |
+|---|---|---|---|---|
+| US-01 | A - Auth | En tant que Visiteur, je veux créer un compte afin de pouvoir accéder à l’application. | Must | M |
+| US-02 | A - Auth | En tant que Utilisateur, je veux me connecter afin de retrouver mes projets. | Must | M |
+| US-03 | A - Auth | En tant que Utilisateur, je veux me déconnecter afin de sécuriser ma session. | Should | S |
+| US-04 | A - Profil | En tant que Utilisateur, je veux modifier mon profil afin de mettre à jour mes informations. | Should | M |
+| US-05 | B - Projets | En tant que Utilisateur, je veux créer un projet afin de structurer mon travail. | Must | M |
+| US-06 | B - Projets | En tant que Utilisateur, je veux lister mes projets afin de voir tout ce que je gère. | Must | S |
+| US-07 | B - Projets | En tant que Utilisateur, je veux modifier un projet afin de corriger ses informations. | Must | M |
+| US-08 | B - Projets | En tant que Utilisateur, je veux supprimer un projet afin de nettoyer ma liste. | Should | S |
+| US-09 | C - Tâches | En tant que Utilisateur, je veux ajouter une tâche dans un projet afin de planifier les actions à faire. | Must | M |
+| US-10 | C - Tâches | En tant que Utilisateur, je veux changer le statut d’une tâche afin de suivre l’avancement. | Must | S |
+| US-11 | C - Tâches | En tant que Utilisateur, je veux modifier une tâche afin d’ajuster son contenu. | Should | M |
+| US-12 | C - Tâches | En tant que Utilisateur, je veux supprimer une tâche afin d’enlever les tâches inutiles. | Should | S |
+| US-13 | D - Recherche | En tant que Utilisateur, je veux filtrer les tâches par statut afin de me concentrer sur les urgences. | Nice | M |
+| US-14 | D - Recherche | En tant que Utilisateur, je veux rechercher une tâche par mot-clé afin de retrouver rapidement une information. | Nice | M |
+| US-15 | E - Admin | En tant que Admin, je veux lister tous les utilisateurs afin de surveiller la plateforme. | Nice | M |
 
-**Critères d’acceptation**
-- Given mon compte existe  
-  When je saisis les bons identifiants  
-  Then je suis connecté et j’accède à la liste de mes projets  
-- Given les identifiants sont incorrects  
-  When je tente de me connecter  
-  Then je reste sur la page et une erreur s’affiche  
+## Critères d’acceptation (Given / When / Then)
 
----
+### US-01 - Créer un compte
 
-## US-03 — [Should] [S] Déconnexion
-En tant que **Utilisateur**,  
-je veux **me déconnecter**,  
-afin de **sécuriser ma session**.
+- Given je suis visiteur sur l’écran d’inscription
+- When je saisis un email valide et un mot de passe conforme
+- Then le compte est créé
+- And je peux ensuite me connecter avec ces identifiants
 
-**Critères d’acceptation**
-- Given je suis connecté  
-  When je clique sur “Déconnexion”  
-  Then je suis déconnecté et renvoyé vers l’accueil  
+### US-02 - Se connecter
 
----
+- Given un compte existe avec email et mot de passe valides
+- When je soumets ces identifiants sur l’écran de connexion
+- Then l’authentification réussit
+- And j’accède à mes données utilisateur
 
-## US-04 — [Should] [S] Modifier mon profil
-En tant que **Utilisateur**,  
-je veux **modifier mon profil**,  
-afin de **mettre à jour mes informations**.
+### US-03 - Se déconnecter
 
-**Critères d’acceptation**
-- Given je suis connecté  
-  When je modifie mon nom et j’enregistre  
-  Then les informations sont sauvegardées et affichées  
+- Given je suis connecté
+- When je déclenche l’action de déconnexion
+- Then ma session est invalidée
+- And un accès protégé redemande une authentification
 
----
+### US-04 - Modifier profil
 
-# Module B — Gestion des projets
+- Given je suis connecté
+- When je modifie mon nom d’affichage
+- Then la modification est persistée
+- And les nouvelles informations sont visibles au rechargement
 
-## US-05 — [Must] [M] Créer un projet
-En tant que **Utilisateur**,  
-je veux **créer un projet**,  
-afin de **structurer mon travail**.
+### US-05 - Créer un projet
 
-**Critères d’acceptation**
-- Given je suis connecté  
-  When je saisis un nom de projet valide  
-  Then le projet apparaît dans ma liste  
-- Given le nom est vide  
-  When je valide  
-  Then le projet n’est pas créé et une erreur s’affiche  
+- Given je suis connecté
+- When je crée un projet avec un nom valide
+- Then le projet est enregistré
+- And le projet apparaît dans ma liste
 
----
+### US-06 - Lister mes projets
 
-## US-06 — [Must] [S] Lister mes projets
-En tant que **Utilisateur**,  
-je veux **lister mes projets**,  
-afin de **voir tout ce que je gère**.
+- Given je suis connecté et j’ai des projets
+- When je demande la liste de mes projets
+- Then seuls mes projets sont retournés
+- And la liste contient les informations principales (id, nom, statut)
 
-**Critères d’acceptation**
-- Given j’ai au moins un projet  
-  When j’ouvre la page “Mes projets”  
-  Then je vois la liste de mes projets  
-- Given je n’ai aucun projet  
-  When j’ouvre la page “Mes projets”  
-  Then je vois un message “Aucun projet”  
+### US-07 - Modifier un projet
 
----
+- Given un projet m’appartient
+- When je modifie son nom ou sa description
+- Then les changements sont sauvegardés
+- And la version modifiée est visible dans la liste
 
-## US-07 — [Must] [M] Modifier un projet
-En tant que **Utilisateur**,  
-je veux **modifier un projet**,  
-afin de **corriger ou compléter ses informations**.
+### US-08 - Supprimer un projet
 
-**Critères d’acceptation**
-- Given un projet existe  
-  When je modifie son nom et j’enregistre  
-  Then les modifications sont visibles dans la liste  
+- Given un projet m’appartient
+- When je confirme la suppression
+- Then le projet est supprimé
+- And il n’apparaît plus dans ma liste
 
----
+### US-09 - Ajouter une tâche
 
-## US-08 — [Should] [M] Supprimer un projet
-En tant que **Utilisateur**,  
-je veux **supprimer un projet**,  
-afin de **nettoyer ma liste**.
+- Given je suis connecté et un projet existe
+- When je crée une tâche dans ce projet
+- Then la tâche est enregistrée
+- And la tâche est liée au bon projet
 
-**Critères d’acceptation**
-- Given un projet existe  
-  When je confirme la suppression  
-  Then le projet est supprimé et n’apparaît plus dans la liste  
+### US-10 - Changer le statut d’une tâche
 
----
+- Given une tâche existe avec le statut `TODO`
+- When je change son statut à `IN_PROGRESS` ou `DONE`
+- Then le nouveau statut est sauvegardé
+- And il est visible lors de la prochaine consultation
 
-# Module C — Gestion des tâches
+### US-11 - Modifier une tâche
 
-## US-09 — [Must] [M] Ajouter une tâche
-En tant que **Utilisateur**,  
-je veux **ajouter une tâche dans un projet**,  
-afin de **planifier les actions à faire**.
+- Given une tâche m’appartient
+- When je modifie son titre ou son échéance
+- Then les modifications sont persistées
+- And les champs non modifiés restent inchangés
 
-**Critères d’acceptation**
-- Given je suis dans un projet  
-  When je crée une tâche avec un titre valide  
-  Then la tâche apparaît dans la liste du projet  
+### US-12 - Supprimer une tâche
 
----
+- Given une tâche m’appartient
+- When je confirme la suppression
+- Then la tâche est supprimée
+- And elle n’apparaît plus dans le projet
 
-## US-10 — [Must] [M] Changer le statut d’une tâche
-En tant que **Utilisateur**,  
-je veux **changer le statut d’une tâche**,  
-afin de **suivre l’avancement**.
+### US-13 - Filtrer les tâches
 
-**Critères d’acceptation**
-- Given une tâche est “à faire”  
-  When je la marque “terminée”  
-  Then son statut devient “faite”  
-- Given une tâche est “faite”  
-  When je la réouvre  
-  Then son statut redevient “à faire”  
+- Given plusieurs tâches existent avec des statuts différents
+- When je filtre par statut `DONE`
+- Then seules les tâches `DONE` sont affichées
+- And les autres tâches ne sont pas retournées
 
----
+### US-14 - Rechercher une tâche par mot-clé
 
-## US-11 — [Should] [M] Modifier une tâche
-En tant que **Utilisateur**,  
-je veux **modifier une tâche**,  
-afin de **ajuster son contenu**.
+- Given plusieurs tâches existent dans mes projets
+- When je recherche un mot-clé présent dans un titre
+- Then seules les tâches correspondantes sont retournées
+- And une recherche sans résultat retourne une liste vide
 
-**Critères d’acceptation**
-- Given une tâche existe  
-  When je modifie son titre ou sa description  
-  Then les changements sont sauvegardés  
+### US-15 - Lister les utilisateurs (Admin)
 
----
+- Given je suis connecté en tant qu’admin
+- When je demande la liste des comptes
+- Then la liste des utilisateurs est retournée
+- And un utilisateur non admin ne peut pas accéder à cette action
 
-## US-12 — [Should] [M] Supprimer une tâche
-En tant que **Utilisateur**,  
-je veux **supprimer une tâche**,  
-afin de **enlever les tâches inutiles**.
+## Priorisation MVP (synthèse)
 
-**Critères d’acceptation**
-- Given une tâche existe  
-  When je confirme la suppression  
-  Then la tâche disparaît de la liste  
+- Must : US-01, US-02, US-05, US-06, US-07, US-09, US-10
+- Should : US-03, US-04, US-08, US-11, US-12
+- Nice : US-13, US-14, US-15
 
----
+## Definition of Done (DoD)
 
-# Module D — Recherche / Filtre
+Une story est considérée Done si :
 
-## US-13 — [Nice] [M] Filtrer les tâches par statut
-En tant que **Utilisateur**,  
-je veux **filtrer les tâches par statut**,  
-afin de **me concentrer sur les tâches urgentes**.
+- le code compile et respecte l’architecture du projet
+- les tests passent (`./gradlew test`)
+- les critères d’acceptation sont validés
+- une PR est ouverte vers `develop` avec description claire
 
-**Critères d’acceptation**
-- Given des tâches “à faire” et “faites” existent  
-  When je filtre “à faire”  
-  Then seules les tâches correspondantes sont affichées  
+## Option Issues GitHub/GitLab
 
----
-
-## US-14 — [Nice] [M] Rechercher une tâche par mot-clé
-En tant que **Utilisateur**,  
-je veux **rechercher une tâche par mot-clé**,  
-afin de **retrouver rapidement une information**.
-
-**Critères d’acceptation**
-- Given plusieurs tâches existent  
-  When je tape un mot-clé  
-  Then seules les tâches correspondantes sont affichées  
-
----
-
-# Module E — Administration (Bonus)
-
-## US-15 — [Nice] [L] Gestion des utilisateurs
-En tant que **Admin**,  
-je veux **voir et gérer les utilisateurs**,  
-afin de **superviser l’application**.
-
-**Critères d’acceptation**
-- Given je suis admin  
-  When j’ouvre la page “Utilisateurs”  
-  Then je vois la liste des utilisateurs  
-- Given je ne suis pas admin  
-  When j’essaie d’accéder à la page  
-  Then l’accès est refusé  
+- Créer une issue par story
+- Labels priorité : `must`, `should`, `nice`
+- Labels module : `module/auth`, `module/project`, `module/task`, `module/search`, `module/admin`
+- Statuts board : `To do`, `Doing`, `Done`
