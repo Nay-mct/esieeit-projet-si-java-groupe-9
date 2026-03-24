@@ -155,3 +155,65 @@ Lancement avec seed :
 - `GET /api/tasks?projectId=1`
 - `GET /api/tasks?projectId=1&status=IN_PROGRESS`
 - `GET /api/tasks?keyword=repo`
+
+## TP 5.1 - Authentification et JWT
+
+### Dependances et configuration
+
+- ajout de `spring-boot-starter-security`
+- ajout de `jjwt-api`, `jjwt-impl`, `jjwt-jackson`
+- bean `PasswordEncoder` en `BCrypt`
+- configuration JWT via :
+  - `jwt.secret`
+  - `jwt.expiration-ms`
+
+Les proprietes JWT sont surchargeables par variables d'environnement :
+
+```bash
+JWT_SECRET=...
+JWT_EXPIRATION_MS=3600000
+```
+
+### Endpoints d'authentification
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+
+Exemple `register` :
+
+```json
+{
+  "username": "lydia",
+  "email": "lydia@example.com",
+  "password": "MotDePasse123!"
+}
+```
+
+Exemple `login` :
+
+```json
+{
+  "login": "lydia@example.com",
+  "password": "MotDePasse123!"
+}
+```
+
+### Ce qui est implemente
+
+- `AuthController` pour `register` et `login`
+- `AuthService` avec normalisation, unicite, hashage et emission du token
+- `JwtService` avec generation, extraction du username et validation
+- `UserJpaRepository.findByEmailOrUsername(...)`
+- `User` compatible `Spring Security` via `UserDetails`
+- `CustomUserDetailsService` pour charger un utilisateur par email ou username
+- config HTTP temporaire qui autorise `/api/auth/**` en attendant le TP 5.2
+
+### Seed dev
+
+Si la base est vide au demarrage avec le profil `dev`, les utilisateurs de demonstration sont crees avec un mot de passe BCrypt correspondant a :
+
+```text
+DevPass123!
+```
+
+Si la base contient deja d'anciennes donnees seedees avant ce TP, il faut repartir d'une base vide pour obtenir ces hashes de demo.

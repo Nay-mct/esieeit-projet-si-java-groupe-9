@@ -5,5 +5,9 @@ package com.esieeit.projetsi.domain.enums;
  */
 public enum UserRole {
     USER,
-    ADMIN
+    ADMIN;
+
+    public String asSecurityRole() {
+        return "ROLE_" + name();
+    }
 }

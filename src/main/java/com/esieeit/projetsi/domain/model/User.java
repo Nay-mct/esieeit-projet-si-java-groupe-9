@@ -19,9 +19,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * JPA entity representing an authenticated user.
@@ -34,7 +38,7 @@ import java.util.Set;
             @UniqueConstraint(name = "uk_users_username", columnNames = "username")
         }
 )
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -129,6 +133,10 @@ public class User {
         return role;
     }
 
+    public String getSecurityRole() {
+        return role.asSecurityRole();
+    }
+
     public final void setRole(UserRole role) {
         Validators.requireNonNull(role, "user.role");
         this.role = role;
@@ -173,6 +181,36 @@ public class User {
     public boolean hasRole(UserRole role) {
         Validators.requireNonNull(role, "user.role");
         return this.role == role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Set.of(new SimpleGrantedAuthority(getSecurityRole()));
+    }
+
+    @Override
+    public String getPassword() {
+        return passwordHash;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     @Override

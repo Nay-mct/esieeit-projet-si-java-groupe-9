@@ -3,6 +3,7 @@ package com.esieeit.projetsi.api.error;
 import com.esieeit.projetsi.domain.exception.BusinessRuleException;
 import com.esieeit.projetsi.domain.exception.InvalidDataException;
 import com.esieeit.projetsi.domain.exception.ResourceNotFoundException;
+import com.esieeit.projetsi.domain.exception.UnauthorizedException;
 import com.esieeit.projetsi.domain.exception.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
@@ -75,6 +76,18 @@ public class GlobalExceptionHandler {
                 return build(
                                 HttpStatus.CONFLICT,
                                 "BUSINESS_RULE_VIOLATION",
+                                ex.getMessage(),
+                                request.getRequestURI(),
+                                List.of());
+        }
+
+        @ExceptionHandler(UnauthorizedException.class)
+        public ResponseEntity<ErrorResponse> handleUnauthorized(
+                        UnauthorizedException ex,
+                        HttpServletRequest request) {
+                return build(
+                                HttpStatus.UNAUTHORIZED,
+                                "UNAUTHORIZED",
                                 ex.getMessage(),
                                 request.getRequestURI(),
                                 List.of());

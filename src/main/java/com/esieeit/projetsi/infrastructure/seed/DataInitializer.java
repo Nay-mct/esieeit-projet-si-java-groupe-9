@@ -15,6 +15,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @Profile("dev")
@@ -23,14 +24,17 @@ public class DataInitializer {
     private final UserJpaRepository userRepository;
     private final ProjectJpaRepository projectRepository;
     private final TaskJpaRepository taskRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public DataInitializer(
             UserJpaRepository userRepository,
             ProjectJpaRepository projectRepository,
-            TaskJpaRepository taskRepository) {
+            TaskJpaRepository taskRepository,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.taskRepository = taskRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
@@ -40,9 +44,10 @@ public class DataInitializer {
                 return;
             }
 
-            User admin = new User("admin@esiee.local", "admin", "change_me_hash", UserRole.ADMIN);
-            User alice = new User("alice@esiee.local", "alice", "change_me_hash", UserRole.USER);
-            User bob = new User("bob@esiee.local", "bob", "change_me_hash", UserRole.USER);
+            String devPasswordHash = passwordEncoder.encode("DevPass123!");
+            User admin = new User("admin@esiee.local", "admin", devPasswordHash, UserRole.ADMIN);
+            User alice = new User("alice@esiee.local", "alice", devPasswordHash, UserRole.USER);
+            User bob = new User("bob@esiee.local", "bob", devPasswordHash, UserRole.USER);
             userRepository.saveAll(List.of(admin, alice, bob));
 
             Project p1 = new Project(
