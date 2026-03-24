@@ -18,7 +18,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        return userRepository.findByEmailOrUsername(login.trim().toLowerCase(Locale.ROOT), login.trim())
+        String normalizedLogin = login.trim().toLowerCase(Locale.ROOT);
+        return userRepository.findByEmailOrUsername(normalizedLogin, normalizedLogin)
                 .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable: " + login));
     }
 }

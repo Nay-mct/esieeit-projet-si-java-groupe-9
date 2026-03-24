@@ -217,3 +217,66 @@ DevPass123!
 ```
 
 Si la base contient deja d'anciennes donnees seedees avant ce TP, il faut repartir d'une base vide pour obtenir ces hashes de demo.
+
+## TP 5.2 - Securisation de l'API avec JWT et roles
+
+### Elements de securite implementes
+
+- `SecurityConfig` en mode stateless avec `SecurityFilterChain`
+- `ApplicationSecurityBeansConfig` avec `PasswordEncoder`, `AuthenticationProvider`, `AuthenticationManager`
+- `JwtAuthenticationFilter` branche avant `UsernamePasswordAuthenticationFilter`
+- `RestAuthenticationEntryPoint` pour les reponses JSON `401`
+- `RestAccessDeniedHandler` pour les reponses JSON `403`
+- `CustomUserDetailsService` pour charger l'utilisateur depuis la base
+- `CorsConfig` pour frontend local `localhost:3000` et `localhost:5173`
+
+### Routes publiques et protegees
+
+Routes publiques :
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/security-test/public/ping`
+- `GET /`
+
+Routes protegees :
+
+- `GET /api/auth/me` -> utilisateur authentifie
+- `GET /api/security-test/user/ping` -> `ROLE_USER`
+- `GET /api/security-test/admin/ping` -> `ROLE_ADMIN`
+- `GET /api/security-test/common/ping` -> `ROLE_USER` ou `ROLE_ADMIN`
+- `GET /api/tasks/**` -> `ROLE_USER` ou `ROLE_ADMIN`
+- `POST /api/tasks/**` -> `ROLE_USER` ou `ROLE_ADMIN`
+- `PUT /api/tasks/**` -> `ROLE_USER` ou `ROLE_ADMIN`
+- `DELETE /api/tasks/**` -> `ROLE_ADMIN`
+- toutes les autres routes -> utilisateur authentifie requis
+
+### Comptes de test avec le profil dev
+
+Si la base est vide et que l'application demarre avec le profil `dev` :
+
+- `alice` / `alice@esiee.local` -> `ROLE_USER`
+- `bob` / `bob@esiee.local` -> `ROLE_USER`
+- `admin` / `admin@esiee.local` -> `ROLE_ADMIN`
+- mot de passe commun seed : `DevPass123!`
+
+### Matrice de verification manuelle
+
+- `GET /api/security-test/public/ping` sans token -> `200`
+- `GET /api/security-test/user/ping` sans token -> `401`
+- `GET /api/security-test/user/ping` avec token user -> `200`
+- `GET /api/security-test/admin/ping` avec token user -> `403`
+- `GET /api/security-test/admin/ping` avec token admin -> `200`
+- `GET /api/security-test/common/ping` avec token user ou admin -> `200`
+
+### Header JWT
+
+Utiliser :
+
+```text
+Authorization: Bearer <token>
+```
+
+### Endpoint conseille ajoute
+
+- `GET /api/auth/me` retourne l'utilisateur authentifie courant via `@AuthenticationPrincipal`

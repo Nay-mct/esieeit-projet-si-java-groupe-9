@@ -9,6 +9,7 @@ import com.esieeit.projetsi.domain.model.Task;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ public class TaskController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public List<TaskResponse> getAll(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long projectId,
@@ -41,6 +43,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public TaskResponse getById(@PathVariable Long id) {
         Task task = taskService.getById(id);
         return TaskMapper.toResponse(task);
@@ -48,12 +51,14 @@ public class TaskController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public TaskResponse create(@Valid @RequestBody TaskCreateRequest request) {
         Task task = taskService.create(request);
         return TaskMapper.toResponse(task);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public TaskResponse update(@PathVariable Long id, @Valid @RequestBody TaskUpdateRequest request) {
         Task task = taskService.update(id, request);
         return TaskMapper.toResponse(task);
@@ -61,6 +66,7 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         taskService.delete(id);
     }

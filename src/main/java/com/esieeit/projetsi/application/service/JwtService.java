@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -62,6 +63,10 @@ public class JwtService {
 
     public boolean isTokenValid(String token, String expectedUsername) {
         return expectedUsername.equals(extractUsername(token)) && !isTokenExpired(token);
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        return isTokenValid(token, userDetails.getUsername());
     }
 
     public long getJwtExpirationMs() {

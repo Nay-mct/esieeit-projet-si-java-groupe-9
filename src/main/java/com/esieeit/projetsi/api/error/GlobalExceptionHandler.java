@@ -8,6 +8,7 @@ import com.esieeit.projetsi.domain.exception.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.List;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -89,6 +90,18 @@ public class GlobalExceptionHandler {
                                 HttpStatus.UNAUTHORIZED,
                                 "UNAUTHORIZED",
                                 ex.getMessage(),
+                                request.getRequestURI(),
+                                List.of());
+        }
+
+        @ExceptionHandler(AccessDeniedException.class)
+        public ResponseEntity<ErrorResponse> handleAccessDenied(
+                        AccessDeniedException ex,
+                        HttpServletRequest request) {
+                return build(
+                                HttpStatus.FORBIDDEN,
+                                "FORBIDDEN",
+                                "Acces refuse : droits insuffisants",
                                 request.getRequestURI(),
                                 List.of());
         }
