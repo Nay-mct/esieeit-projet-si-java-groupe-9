@@ -81,7 +81,39 @@ public class DataInitializer {
             t4.setPriority(TaskPriority.URGENT);
             t4.assignTo(alice);
 
-            taskRepository.saveAll(List.of(t1, t2, t3, t4));
+            Task t5 = new Task("Configurer endpoints REST", "Ajouter les routes principales du backlog", p1);
+            t5.setDueDate(LocalDate.now().plusDays(4));
+            t5.setPriority(TaskPriority.HIGH);
+            t5.start();
+            t5.assignTo(alice);
+
+            Task t6 = new Task("Implementer authentification JWT", "Creer login, register et generation du token", p1);
+            t6.setDueDate(LocalDate.now().plusDays(2));
+            t6.setPriority(TaskPriority.URGENT);
+            t6.start();
+            t6.assignTo(admin);
+
+            Task t7 = new Task("Rediger tests unitaires", "Verifier validations User et workflow Task", p1);
+            t7.setDueDate(LocalDate.now().plusDays(6));
+            t7.setPriority(TaskPriority.MEDIUM);
+            t7.assignTo(bob);
+
+            Task t8 = new Task("Documenter l API", "Completer README et exemples d appels", p1);
+            t8.setDueDate(LocalDate.now().plusDays(7));
+            t8.setPriority(TaskPriority.LOW);
+
+            Task t9 = new Task("Prioriser le backlog support", "Classer les demandes internes par urgence", p2);
+            t9.setDueDate(LocalDate.now().plusDays(3));
+            t9.setPriority(TaskPriority.HIGH);
+            t9.start();
+            t9.assignTo(alice);
+
+            Task t10 = new Task("Preparer demo finale", "Verifier le parcours de soutenance et les comptes de test", p2);
+            t10.setDueDate(LocalDate.now().plusDays(9));
+            t10.setPriority(TaskPriority.URGENT);
+            t10.assignTo(admin);
+
+            taskRepository.saveAll(List.of(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10));
         };
     }
 }

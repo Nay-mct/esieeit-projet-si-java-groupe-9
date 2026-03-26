@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projet SI Java - Presentation</title>
+  <link rel="stylesheet" href="presentation.css">
+</head>
+<body>
+  <div class="app-shell">
+    <main class="deck">
+      <section class="slide active cover">
+        <div class="eyebrow">Projet SI Java • Groupe 9</div>
+        <div class="hero-layout">
+          <div>
+            <h1>Une API REST securisee, lisible et defendable a l'oral</h1>
+            <p class="lead">Backend Spring Boot avec logique metier, securite JWT, roles et persistence MySQL.</p>
+            <div class="chips">
+              <span>Java 21</span><span>Spring Boot</span><span>JPA</span><span>Security</span><span>JWT</span><span>MySQL</span>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="hero-card"><strong>API</strong><p>Controllers, DTO, erreurs HTTP</p></div>
+            <div class="hero-card"><strong>Metier</strong><p>Services, workflow, validations</p></div>
+            <div class="hero-card"><strong>Securite</strong><p>JWT stateless et roles</p></div>
+            <div class="hero-card"><strong>Data</strong><p>JPA, MySQL, seed dev</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="eyebrow">1. Vue d'ensemble</div>
+        <h2>Ce que fait le projet</h2>
+        <div class="two-col">
+          <ul class="big-list">
+            <li>gerer des taches et les organiser par projet</li>
+            <li>authentifier les utilisateurs</li>
+            <li>proteger les endpoints avec JWT</li>
+            <li>distinguer les droits `USER` et `ADMIN`</li>
+            <li>persister les donnees en MySQL</li>
+          </ul>
+          <div class="metrics">
+            <div class="metric"><strong>4</strong><span>couches separees</span></div>
+            <div class="metric"><strong>JWT</strong><span>authentification stateless</span></div>
+            <div class="metric"><strong>2</strong><span>roles metiers</span></div>
+            <div class="metric"><strong>REST</strong><span>API testable et demonstrable</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="eyebrow">2. Architecture</div>
+        <h2>Une separation propre des responsabilites</h2>
+        <div class="two-col align-center">
+          <div class="layer-stack">
+            <div class="layer layer-api"><strong>api</strong><span>controllers, DTO, mapping</span></div>
+            <div class="layer layer-app"><strong>application</strong><span>services et ports</span></div>
+            <div class="layer layer-domain"><strong>domain</strong><span>entites et regles metier</span></div>
+            <div class="layer layer-infra"><strong>infrastructure</strong><span>JPA, securite, config, seed</span></div>
+          </div>
+          <div class="note-panel">
+            <h3>Principe cle</h3>
+            <p>Le controller ne parle pas directement a la base. Il delegue a un service, qui passe par un port, puis par un adaptateur technique.</p>
+            <div class="tags"><span>testable</span><span>lisible</span><span>evolutif</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="eyebrow">3. Modele metier</div>
+        <h2>Les entites qui structurent le domaine</h2>
+        <div class="domain-grid">
+          <div class="entity user"><strong>User</strong><p>email, username, role, passwordHash</p></div>
+          <div class="entity project"><strong>Project</strong><p>name, description, status, owner</p></div>
+          <div class="entity task"><strong>Task</strong><p>title, status, priority, dueDate, assignee</p></div>
+          <div class="entity comment"><strong>Comment</strong><p>content, author, task</p></div>
+        </div>
+        <div class="relations">
+          <span>User -> Project</span>
+          <span>Project -> Task</span>
+          <span>User -> Task</span>
+          <span>Task -> Comment</span>
+        </div>
+        <div class="status-row">
+          <span>TODO</span><span>IN_PROGRESS</span><span>DONE</span><span>ARCHIVED</span>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="eyebrow">4. Flux d'une requete</div>
+        <h2>Exemple avec `GET /api/tasks`</h2>
+        <div class="flow-grid">
+          <div class="flow-step"><strong>1. Client</strong><p>appelle l'endpoint</p></div>
+          <div class="flow-step arrow">?</div>
+          <div class="flow-step"><strong>2. Securite</strong><p>verifie le token JWT</p></div>
+          <div class="flow-step arrow">?</div>
+          <div class="flow-step"><strong>3. Controller</strong><p>recoit la requete</p></div>
+          <div class="flow-step arrow">?</div>
+          <div class="flow-step"><strong>4. Service</strong><p>applique la logique metier</p></div>
+          <div class="flow-step arrow">?</div>
+          <div class="flow-step"><strong>5. Repository</strong><p>passe par l'adaptateur JPA</p></div>
+          <div class="flow-step arrow">?</div>
+          <div class="flow-step"><strong>6. MySQL</strong><p>lit ou ecrit les donnees</p></div>
+        </div>
+        <div class="triple-callout">
+          <div><strong>TaskController</strong><p>gere l'entree HTTP</p></div>
+          <div><strong>TaskService</strong><p>controle les transitions d'etat</p></div>
+          <div><strong>TaskMapper</strong><p>renvoie un DTO propre au client</p></div>
+        </div>
+      </section>
+      <section class="slide">
+        <div class="eyebrow">5. Authentification et JWT</div>
+        <h2>Du login jusqu'a la route protegee</h2>
+        <div class="two-col">
+          <div class="process-card">
+            <h3>Cycle de login</h3>
+            <ol>
+              <li>`/api/auth/login` recoit `login + password`</li>
+              <li>`AuthenticationManager` verifie les identifiants</li>
+              <li>`CustomUserDetailsService` recharge le user</li>
+              <li>`PasswordEncoder` compare le hash BCrypt</li>
+              <li>`JwtService` genere le token</li>
+              <li>le token est renvoye au client</li>
+            </ol>
+          </div>
+          <div class="process-card">
+            <h3>Cycle d'une route protegee</h3>
+            <ol>
+              <li>header `Authorization: Bearer ...`</li>
+              <li>`JwtAuthenticationFilter` extrait le token</li>
+              <li>le token est valide</li>
+              <li>le `SecurityContext` est rempli</li>
+              <li>`@PreAuthorize` controle le role</li>
+              <li>le controller peut s'executer</li>
+            </ol>
+          </div>
+        </div>
+        <div class="jwt-rail">
+          <span>Client</span><span>AuthController</span><span>AuthService</span><span>JwtService</span><span>Route protegee</span>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="eyebrow">6. Securite et roles</div>
+        <h2>Qui peut faire quoi</h2>
+        <div class="two-col align-center">
+          <table class="role-table">
+            <thead>
+              <tr><th>Route</th><th>USER</th><th>ADMIN</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>`GET /api/tasks`</td><td>Oui</td><td>Oui</td></tr>
+              <tr><td>`POST /api/tasks`</td><td>Oui</td><td>Oui</td></tr>
+              <tr><td>`PUT /api/tasks/{id}`</td><td>Oui</td><td>Oui</td></tr>
+              <tr><td>`DELETE /api/tasks/{id}`</td><td>Non</td><td>Oui</td></tr>
+              <tr><td>`GET /api/auth/me`</td><td>Oui</td><td>Oui</td></tr>
+            </tbody>
+          </table>
+          <div class="security-stack">
+            <div class="security-box"><strong>401</strong><p>pas de token ou token invalide</p></div>
+            <div class="security-box"><strong>403</strong><p>token valide mais role insuffisant</p></div>
+            <div class="security-box"><strong>Stateless</strong><p>aucune session serveur</p></div>
+            <div class="security-box"><strong>`@PreAuthorize`</strong><p>regles d'acces declaratives</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="eyebrow">7. Persistance et execution</div>
+        <h2>Comment l'application parle a MySQL</h2>
+        <div class="two-col align-center">
+          <div class="schema-board">
+            <div class="schema-card"><strong>users</strong><p>email, username, role</p></div>
+            <div class="schema-link">?</div>
+            <div class="schema-card"><strong>projects</strong><p>owner_id, status</p></div>
+            <div class="schema-link down">?</div>
+            <div class="schema-card wide"><strong>tasks</strong><p>project_id, assignee_id, status, priority</p></div>
+            <div class="schema-link">?</div>
+            <div class="schema-card"><strong>comments</strong><p>task_id, author_id</p></div>
+          </div>
+          <div class="note-panel">
+            <h3>Au demarrage</h3>
+            <ul class="big-list compact">
+              <li>Spring ouvre la datasource</li>
+              <li>Hibernate met a jour le schema avec `ddl-auto: update`</li>
+              <li>le profil `dev` peut injecter des donnees de demo</li>
+              <li>Docker aide a lancer une base locale propre</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide">
+        <div class="eyebrow">8. Qualite et bilan</div>
+        <h2>Pourquoi le projet est deja presentable</h2>
+        <div class="quality-grid">
+          <div class="quality-card"><strong>Validation</strong><p>Les DTO utilisent `@Valid` pour filtrer les requetes invalides.</p></div>
+          <div class="quality-card"><strong>Erreurs JSON</strong><p>`GlobalExceptionHandler` gere les `400`, `401`, `403`, `404`, `409`, `500`.</p></div>
+          <div class="quality-card"><strong>Tests</strong><p>Des tests metier existent sur les validations utilisateur et le workflow des taches.</p></div>
+          <div class="quality-card accent"><strong>Point d'attention</strong><p>La creation de tache utilise encore un `defaultProject`, ce qui est acceptable pour le TP mais a raffiner ensuite.</p></div>
+        </div>
+      </section>
+
+      <section class="slide closing">
+        <div class="eyebrow">Conclusion</div>
+        <div class="two-col align-center">
+          <div>
+            <h2>Le projet n'est pas juste une suite d'endpoints</h2>
+            <p class="lead">C'est un backend complet, avec architecture, logique metier, securite, persistance et un vrai parcours de demo.</p>
+            <div class="chips">
+              <span>Architecture claire</span><span>JWT operationnel</span><span>Roles geres</span><span>MySQL persistant</span>
+            </div>
+          </div>
+          <div class="note-panel strong">
+            <h3>Ordre conseille pour la soutenance</h3>
+            <ol>
+              <li>montrer la structure du repo</li>
+              <li>expliquer le flux `login -> token -> route protegee`</li>
+              <li>ouvrir `TaskController` puis `TaskService`</li>
+              <li>terminer sur la base et les roles</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="controls">
+      <button id="prevBtn" class="nav-btn" type="button">?</button>
+      <div class="progress-wrap">
+        <span id="counter">1 / 10</span>
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+      </div>
+      <button id="nextBtn" class="nav-btn" type="button">?</button>
+    </footer>
+  </div>
+
+  <script src="presentation.js"></script>
+</body>
+</html>
